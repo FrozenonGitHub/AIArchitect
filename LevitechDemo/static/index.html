@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Levitech - Legal Assistant</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: #1a365d;
+            color: white;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+        }
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Case Selector */
+        .case-selector {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .case-selector label {
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        .case-selector select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+        .case-selector button {
+            margin-left: 10px;
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .case-selector button:hover {
+            background: #1d4ed8;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+        .message.user {
+            background: #e0e7ff;
+            margin-left: 50px;
+        }
+        .message.assistant {
+            background: #f3f4f6;
+            margin-right: 50px;
+        }
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .message-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        .chat-input form {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .chat-input button {
+            padding: 12px 24px;
+            background: #059669;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .chat-input button:hover {
+            background: #047857;
+        }
+        .chat-input button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Sources Panel */
+        .sources-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+        .sources-panel h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .source-section {
+            margin-bottom: 20px;
+        }
+        .source-section h4 {
+            font-size: 13px;
+            color: #1a365d;
+            margin-bottom: 8px;
+        }
+        .source-item {
+            padding: 8px 10px;
+            background: #f9fafb;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .source-item:hover {
+            background: #e5e7eb;
+        }
+        .source-item .file-name {
+            font-weight: 600;
+            color: #1a365d;
+        }
+        .source-item .page-num {
+            color: #666;
+            font-size: 12px;
+        }
+        .source-item .excerpt {
+            color: #666;
+            font-size: 12px;
+            margin-top: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .source-item a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .source-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .upload-section input[type="file"] {
+            font-size: 12px;
+        }
+        .upload-section button {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Loading indicator */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #059669;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Documents list */
+        .doc-list {
+            margin-top: 10px;
+        }
+        .doc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            background: #f0f9ff;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+        .doc-item .name {
+            color: #1e40af;
+        }
+        .doc-item .delete-btn {
+            color: #dc2626;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Levitech Legal Assistant</h1>
+    </header>
+
+    <div class="container">
+        <!-- Case Selector -->
+        <div class="case-selector">
+            <label for="case-select">Case:</label>
+            <select id="case-select">
+                <option value="">-- Select a case --</option>
+            </select>
+            <button onclick="createCase()">+ New Case</button>
+        </div>
+
+        <div class="main-layout">
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message assistant">
+                        <div class="message-label">Assistant</div>
+                        Select a case to begin asking questions about your documents.
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <form onsubmit="sendMessage(event)">
+                        <input type="text" id="question-input" placeholder="Ask a question about the case..." disabled>
+                        <button type="submit" id="send-btn" disabled>Ask</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sources Panel -->
+            <div class="sources-panel">
+                <h3>Sources</h3>
+
+                <div class="source-section">
+                    <h4>Client Documents</h4>
+                    <div id="client-sources">
+                        <div class="source-item" style="color: #999;">No documents loaded</div>
+                    </div>
+                </div>
+
+                <div class="source-section">
+                    <h4>Legal Sources</h4>
+                    <div id="legal-sources">
+                        <div class="source-item" style="color: #999;">No legal sources cited yet</div>
+                    </div>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="upload-section">
+                    <h4>Upload Document</h4>
+                    <input type="file" id="file-input" accept=".pdf,.docx" disabled>
+                    <button onclick="uploadDocument()" id="upload-btn" disabled>Upload</button>
+                    <div class="doc-list" id="doc-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCaseId = null;
+
+        // Load cases on page load
+        document.addEventListener('DOMContentLoaded', loadCases);
+
+        async function loadCases() {
+            try {
+                const response = await fetch('/cases');
+                const cases = await response.json();
+
+                const select = document.getElementById('case-select');
+                select.innerHTML = '<option value="">-- Select a case --</option>';
+
+                cases.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.case_id;
+                    option.textContent = c.client_name ? `${c.case_id} - ${c.client_name}` : c.case_id;
+                    select.appendChild(option);
+                });
+
+                select.addEventListener('change', (e) => {
+                    if (e.target.value) {
+                        selectCase(e.target.value);
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to load cases:', err);
+            }
+        }
+
+        async function selectCase(caseId) {
+            currentCaseId = caseId;
+
+            // Enable inputs
+            document.getElementById('question-input').disabled = false;
+            document.getElementById('send-btn').disabled = false;
+            document.getElementById('file-input').disabled = false;
+            document.getElementById('upload-btn').disabled = false;
+
+            // Load documents
+            await loadDocuments();
+
+            // Clear chat
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = `
+                <div class="message assistant">
+                    <div class="message-label">Assistant</div>
+                    Case "${caseId}" selected. You can now ask questions about the uploaded documents.
+                </div>
+            `;
+
+            // Clear sources
+            document.getElementById('client-sources').innerHTML = '<div class="source-item" style="color: #999;">Ask a question to see relevant sources</div>';
+            document.getElementById('legal-sources').innerHTML = '<div class="source-item" style="color: #999;">No legal sources cited yet</div>';
+        }
+
+        async function loadDocuments() {
+            if (!currentCaseId) return;
+
+            try {
+                const response = await fetch(`/cases/${currentCaseId}/documents`);
+                const docs = await response.json();
+
+                const docList = document.getElementById('doc-list');
+                if (docs.length === 0) {
+                    docList.innerHTML = '<div style="color: #999; font-size: 12px;">No documents uploaded</div>';
+                } else {
+                    docList.innerHTML = docs.map(d => `
+                        <div class="doc-item">
+                            <span class="name">${d.file_name}</span>
+                            <span class="delete-btn" onclick="deleteDocument('${d.file_name}')">&times;</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error('Failed to load documents:', err);
+            }
+        }
+
+        async function createCase() {
+            const caseId = prompt('Enter case ID (folder name):');
+            if (!caseId) return;
+
+            const clientName = prompt('Enter client name (optional):') || '';
+
+            try {
+                const response = await fetch('/cases', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        case_id: caseId,
+                        client_name: clientName,
+                        matter_type: ''
+                    })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    alert('Failed to create case: ' + err.detail);
+                    return;
+                }
+
+                await loadCases();
+                document.getElementById('case-select').value = caseId;
+                selectCase(caseId);
+            } catch (err) {
+                alert('Error creating case: ' + err.message);
+            }
+        }
+
+        async function uploadDocument() {
+            if (!currentCaseId) return;
+
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                document.getElementById('upload-btn').textContent = 'Uploading...';
+                document.getElementById('upload-btn').disabled = true;
+
+                const response = await fetch(`/cases/${currentCaseId}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    alert('Upload failed: ' + err.detail);
+                    return;
+                }
+
+                fileInput.value = '';
+                await loadDocuments();
+                alert('Document uploaded and indexed successfully!');
+            } catch (err) {
+                alert('Error uploading: ' + err.message);
+            } finally {
+                document.getElementById('upload-btn').textContent = 'Upload';
+                document.getElementById('upload-btn').disabled = false;
+            }
+        }
+
+        async function deleteDocument(fileName) {
+            if (!confirm(`Delete ${fileName}?`)) return;
+
+            try {
+                const response = await fetch(`/cases/${currentCaseId}/documents/${encodeURIComponent(fileName)}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    alert('Delete failed: ' + err.detail);
+                    return;
+                }
+
+                await loadDocuments();
+            } catch (err) {
+                alert('Error deleting: ' + err.message);
+            }
+        }
+
+        async function sendMessage(event) {
+            event.preventDefault();
+            if (!currentCaseId) return;
+
+            const input = document.getElementById('question-input');
+            const question = input.value.trim();
+            if (!question) return;
+
+            const chatMessages = document.getElementById('chat-messages');
+
+            // Add user message
+            chatMessages.innerHTML += `
+                <div class="message user">
+                    <div class="message-label">You</div>
+                    ${escapeHtml(question)}
+                </div>
+            `;
+
+            // Add loading indicator
+            const loadingId = 'loading-' + Date.now();
+            chatMessages.innerHTML += `
+                <div class="message assistant" id="${loadingId}">
+                    <div class="loading"></div> Thinking...
+                </div>
+            `;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            input.value = '';
+            input.disabled = true;
+            document.getElementById('send-btn').disabled = true;
+
+            try {
+                const response = await fetch(`/cases/${currentCaseId}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await response.json();
+
+                // Remove loading
+                document.getElementById(loadingId).remove();
+
+                if (!response.ok) {
+                    chatMessages.innerHTML += `
+                        <div class="message error">
+                            <div class="message-label">Error</div>
+                            ${escapeHtml(data.detail || 'An error occurred')}
+                        </div>
+                    `;
+                } else {
+                    // Add assistant response
+                    chatMessages.innerHTML += `
+                        <div class="message assistant">
+                            <div class="message-label">Assistant</div>
+                            ${formatAnswer(data.answer)}
+                        </div>
+                    `;
+
+                    // Update sources panel
+                    updateSources(data.evidence, data.legal_sources);
+                }
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                chatMessages.innerHTML += `
+                    <div class="message error">
+                        <div class="message-label">Error</div>
+                        Failed to get response: ${escapeHtml(err.message)}
+                    </div>
+                `;
+            } finally {
+                input.disabled = false;
+                document.getElementById('send-btn').disabled = false;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        function updateSources(evidence, legalSources) {
+            // Client sources
+            const clientDiv = document.getElementById('client-sources');
+            const clientEvidence = evidence.filter(e => e.source_type === 'client');
+
+            if (clientEvidence.length === 0) {
+                clientDiv.innerHTML = '<div class="source-item" style="color: #999;">No client documents cited</div>';
+            } else {
+                clientDiv.innerHTML = clientEvidence.map(e => `
+                    <div class="source-item">
+                        <div class="file-name">${escapeHtml(e.file_name)}</div>
+                        ${e.page_num ? `<div class="page-num">Page ${e.page_num}</div>` : ''}
+                        <div class="excerpt">${escapeHtml(e.excerpt)}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Legal sources
+            const legalDiv = document.getElementById('legal-sources');
+            if (!legalSources || legalSources.length === 0) {
+                legalDiv.innerHTML = '<div class="source-item" style="color: #999;">No legal sources cited</div>';
+            } else {
+                legalDiv.innerHTML = legalSources.map(s => `
+                    <div class="source-item">
+                        <a href="${escapeHtml(s.url)}" target="_blank">${escapeHtml(s.title || s.domain)}</a>
+                        <div class="excerpt">${escapeHtml(s.excerpt)}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function formatAnswer(text) {
+            // Convert markdown-style formatting
+            return escapeHtml(text)
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\[Source: (.*?)\]/g, '<em style="color: #2563eb;">[Source: $1]</em>');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

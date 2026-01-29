@@ -1,0 +1,20 @@
+[
+    {
+        "question": "When did the client start their employment?",
+        "expected_answer_contains": ["employment", "date"],
+        "expected_source": "employment_contract.pdf",
+        "expected_page": 1
+    },
+    {
+        "question": "What is the client's current visa status?",
+        "expected_answer_contains": ["visa"],
+        "expected_source": null,
+        "expected_page": null
+    },
+    {
+        "question": "What is the client's name?",
+        "expected_answer_contains": [],
+        "expected_source": null,
+        "expected_page": null
+    }
+]
