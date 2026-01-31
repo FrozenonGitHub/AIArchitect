@@ -1,0 +1,12 @@
+.git
+.gitignore
+.venv
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+Recordings/
+LevitechDemo/storage/
+LevitechDemo/chroma_db/
