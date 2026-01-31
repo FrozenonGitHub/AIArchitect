@@ -7,10 +7,9 @@ These are non-negotiable rules you don't revisit during P0.
 ### 0.1 Citation invariant
 
 The system may only cite:
+- acas.org.uk
 - gov.uk
-- legislation.gov.uk
-- caselaw.nationalarchives.gov.uk
-- commonslibrary.parliament.uk
+- citizensadvice.org.uk
 
 Every citation must have:
 - URL
@@ -133,9 +132,9 @@ Do not merge this with client-doc retrieval.
 
 ### 3.2 Discovery vs citation rule
 
-- Blogs (Free Movement etc.) → optional query expansion only
-- You must fetch the underlying judgment from: `caselaw.nationalarchives.gov.uk`
-- Only the latter can be cited.
+- Blogs and unofficial sources → optional for query expansion only
+- Citations must come from whitelisted domains: `acas.org.uk`, `gov.uk`, `citizensadvice.org.uk`
+- Only sources from these domains can be cited.
 
 ---
 

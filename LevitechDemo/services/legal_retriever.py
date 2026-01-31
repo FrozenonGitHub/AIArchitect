@@ -76,7 +76,7 @@ def fetch_legal_source(url: str, force_refresh: bool = False) -> LegalSource:
     try:
         response = requests.get(
             url,
-            timeout=30,
+            timeout=15,  # Reduced timeout for faster response
             headers={
                 "User-Agent": "Mozilla/5.0 (compatible; LevitechBot/1.0; legal research)",
             },
@@ -167,11 +167,12 @@ def search_gov_uk(query: str, max_results: int = 5) -> list[dict]:
     try:
         response = requests.get(
             search_url,
-            timeout=30,
+            timeout=10,  # Reduced timeout
             headers={"User-Agent": "Mozilla/5.0 (compatible; LevitechBot/1.0)"},
         )
         response.raise_for_status()
-    except requests.RequestException:
+    except requests.RequestException as e:
+        print(f"[legal_retriever] GOV.UK search failed: {e}")
         return []
 
     soup = BeautifulSoup(response.text, "html.parser")
@@ -200,9 +201,9 @@ def search_gov_uk(query: str, max_results: int = 5) -> list[dict]:
     return results
 
 
-def search_caselaw(query: str, max_results: int = 5) -> list[dict]:
+def search_acas(query: str, max_results: int = 5) -> list[dict]:
     """
-    Search caselaw.nationalarchives.gov.uk for judgments.
+    Search acas.org.uk for employment advice.
 
     Args:
         query: Search query
@@ -211,34 +212,85 @@ def search_caselaw(query: str, max_results: int = 5) -> list[dict]:
     Returns:
         List of dicts with url, title, snippet
     """
-    search_url = f"https://caselaw.nationalarchives.gov.uk/judgments/search?query={requests.utils.quote(query)}"
+    search_url = f"https://www.acas.org.uk/search?keys={requests.utils.quote(query)}"
 
     try:
         response = requests.get(
             search_url,
-            timeout=30,
+            timeout=10,  # Reduced timeout
             headers={"User-Agent": "Mozilla/5.0 (compatible; LevitechBot/1.0)"},
         )
         response.raise_for_status()
-    except requests.RequestException:
+    except requests.RequestException as e:
+        print(f"[legal_retriever] ACAS search failed: {e}")
         return []
 
     soup = BeautifulSoup(response.text, "html.parser")
     results = []
 
-    # Parse search results (caselaw specific structure)
-    for item in soup.select(".judgment-listing__judgment")[:max_results]:
-        link = item.select_one("a.judgment-listing__title")
+    # Parse search results (ACAS specific structure)
+    for item in soup.select(".search-result, .views-row")[:max_results]:
+        link = item.select_one("a")
         if link and link.get("href"):
             url = link.get("href")
             if not url.startswith("http"):
-                url = "https://caselaw.nationalarchives.gov.uk" + url
+                url = "https://www.acas.org.uk" + url
 
             title = link.get_text().strip()
             snippet = ""
-            meta = item.select_one(".judgment-listing__meta")
-            if meta:
-                snippet = meta.get_text().strip()
+            desc = item.select_one(".search-result__snippet, p")
+            if desc:
+                snippet = desc.get_text().strip()
+
+            results.append({
+                "url": url,
+                "title": title,
+                "snippet": snippet,
+            })
+
+    return results
+
+
+def search_citizens_advice(query: str, max_results: int = 5) -> list[dict]:
+    """
+    Search citizensadvice.org.uk for advice pages.
+
+    Args:
+        query: Search query
+        max_results: Maximum results to return
+
+    Returns:
+        List of dicts with url, title, snippet
+    """
+    search_url = f"https://www.citizensadvice.org.uk/search/?q={requests.utils.quote(query)}"
+
+    try:
+        response = requests.get(
+            search_url,
+            timeout=10,  # Reduced timeout
+            headers={"User-Agent": "Mozilla/5.0 (compatible; LevitechBot/1.0)"},
+        )
+        response.raise_for_status()
+    except requests.RequestException as e:
+        print(f"[legal_retriever] Citizens Advice search failed: {e}")
+        return []
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    results = []
+
+    # Parse search results (Citizens Advice specific structure)
+    for item in soup.select(".search-results__item, .result-item")[:max_results]:
+        link = item.select_one("a")
+        if link and link.get("href"):
+            url = link.get("href")
+            if not url.startswith("http"):
+                url = "https://www.citizensadvice.org.uk" + url
+
+            title = link.get_text().strip()
+            snippet = ""
+            desc = item.select_one(".search-results__description, .result-description, p")
+            if desc:
+                snippet = desc.get_text().strip()
 
             results.append({
                 "url": url,
@@ -262,7 +314,7 @@ def get_legal_sources_for_query(query: str) -> list[LegalSource]:
     sources = []
 
     # Search GOV.UK
-    gov_results = search_gov_uk(query, max_results=3)
+    gov_results = search_gov_uk(query, max_results=2)
     for result in gov_results:
         try:
             source = fetch_legal_source(result["url"])
@@ -270,9 +322,18 @@ def get_legal_sources_for_query(query: str) -> list[LegalSource]:
         except (DomainNotAllowedError, FetchError) as e:
             print(f"Warning: Failed to fetch {result['url']}: {e}")
 
-    # Search caselaw
-    case_results = search_caselaw(query, max_results=2)
-    for result in case_results:
+    # Search ACAS (employment advice)
+    acas_results = search_acas(query, max_results=2)
+    for result in acas_results:
+        try:
+            source = fetch_legal_source(result["url"])
+            sources.append(source)
+        except (DomainNotAllowedError, FetchError) as e:
+            print(f"Warning: Failed to fetch {result['url']}: {e}")
+
+    # Search Citizens Advice
+    ca_results = search_citizens_advice(query, max_results=2)
+    for result in ca_results:
         try:
             source = fetch_legal_source(result["url"])
             sources.append(source)

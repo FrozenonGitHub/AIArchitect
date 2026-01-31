@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Levitech - Legal Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -11,323 +12,539 @@
             padding: 0;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: #f5f5f5;
-            color: #333;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #e8e8e8;
+            color: #1a1a1a;
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
+
+        /* Header */
         header {
-            background: #1a365d;
-            color: white;
-            padding: 15px 20px;
-            margin-bottom: 20px;
+            background: #a8a8a8;
+            color: #1a1a1a;
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
         }
-        header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 20px;
-        }
-        @media (max-width: 900px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-            }
+        .logo {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            color: #1a1a1a;
         }
 
         /* Case Selector */
         .case-selector {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: #f5f5f5;
+            padding: 20px 25px;
+            border-bottom: 1px solid #d0d0d0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         .case-selector label {
-            font-weight: 600;
-            margin-right: 10px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         .case-selector select {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 10px 15px;
+            border: 1px solid #1a1a1a;
+            border-radius: 0;
             font-size: 14px;
-            min-width: 200px;
+            min-width: 250px;
+            background: white;
+            font-family: inherit;
         }
-        .case-selector button {
-            margin-left: 10px;
-            padding: 8px 16px;
-            background: #2563eb;
-            color: white;
+        .case-selector select:focus {
+            outline: 2px solid #1a1a1a;
+            outline-offset: 2px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #1a1a1a;
+            color: #e8e8e8;
             border: none;
-            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
             cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
         }
-        .case-selector button:hover {
-            background: #1d4ed8;
+        .btn:hover {
+            background: #333;
+        }
+        .btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+        .btn-outline {
+            background: transparent;
+            color: #1a1a1a;
+            border: 1px solid #1a1a1a;
+        }
+        .btn-outline:hover {
+            background: #1a1a1a;
+            color: #e8e8e8;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 0;
+            flex: 1;
+            min-height: 0;
+        }
+        @media (max-width: 1000px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .chat-area {
+                border-right: none;
+                border-bottom: 1px solid #d0d0d0;
+            }
         }
 
         /* Chat Area */
         .chat-area {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
-            min-height: 500px;
+            border-right: 1px solid #d0d0d0;
+            min-height: 0;
+        }
+        .chat-header {
+            padding: 15px 25px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 14px;
+        }
+        .chat-header-title {
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #666;
+            white-space: nowrap;
+        }
+        .thread-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-left: auto;
+            justify-content: flex-end;
+        }
+        .thread-pill {
+            border: 1px solid #9a9a9a;
+            background: #9a9a9a;
+            color: #f5f5f5;
+            padding: 4px 12px;
+            font-size: 0.65rem;
+            letter-spacing: 0.04em;
+            text-transform: none;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
+            font-family: inherit;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .thread-pill:hover {
+            background: #858585;
+            border-color: #858585;
+        }
+        .thread-pill.active {
+            background: #3a3a3a;
+            border-color: #3a3a3a;
+            color: #f5f5f5;
+        }
+        .thread-pill.add {
+            background: transparent;
+            color: #3a3a3a;
+            border-color: #3a3a3a;
+            font-weight: 600;
+            padding: 4px 10px;
+        }
+        .thread-pill.add:hover {
+            background: #efefef;
+            border-color: #2f2f2f;
+            color: #2f2f2f;
+        }
+        .thread-pill-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            line-height: 1;
+            margin-left: 2px;
+            color: #f5f5f5;
+            opacity: 0.75;
+        }
+        .thread-pill-delete:hover {
+            background: #222;
+            opacity: 1;
         }
         .chat-messages {
             flex: 1;
-            padding: 20px;
+            padding: 25px;
             overflow-y: auto;
-            max-height: 400px;
+            min-height: 0;
         }
         .message {
-            margin-bottom: 15px;
-            padding: 12px 16px;
-            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px 20px;
         }
         .message.user {
-            background: #e0e7ff;
-            margin-left: 50px;
+            background: #f5f5f5;
+            margin-left: 60px;
+            border-left: 3px solid #1a1a1a;
         }
         .message.assistant {
-            background: #f3f4f6;
-            margin-right: 50px;
+            background: #fafafa;
+            margin-right: 60px;
+            border-left: 3px solid #888;
         }
         .message.error {
-            background: #fee2e2;
-            color: #991b1b;
+            background: #f5f0f0;
+            border-left: 3px solid #c00;
+            color: #800;
         }
         .message-label {
-            font-size: 12px;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: #666;
-            margin-bottom: 5px;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .message-content {
+            font-size: 0.95rem;
+            line-height: 1.7;
         }
         .chat-input {
-            padding: 15px;
-            border-top: 1px solid #eee;
+            padding: 20px 25px;
+            border-top: 1px solid #e0e0e0;
+            background: #fafafa;
         }
         .chat-input form {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
         .chat-input input {
             flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            padding: 14px 18px;
+            border: 1px solid #ccc;
             font-size: 14px;
+            font-family: inherit;
         }
-        .chat-input button {
-            padding: 12px 24px;
-            background: #059669;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
+        .chat-input input:focus {
+            outline: none;
+            border-color: #1a1a1a;
         }
-        .chat-input button:hover {
-            background: #047857;
-        }
-        .chat-input button:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
+        .chat-input input::placeholder {
+            color: #999;
         }
 
         /* Sources Panel */
         .sources-panel {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            padding: 15px;
+            background: #f5f5f5;
+            padding: 0;
+            overflow-y: auto;
+            min-height: 0;
         }
-        .sources-panel h3 {
-            font-size: 14px;
+        .panel-section {
+            border-bottom: 1px solid #d0d0d0;
+        }
+        .panel-header {
+            padding: 15px 20px;
+            font-size: 0.75rem;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             color: #666;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            background: #eee;
         }
-        .source-section {
-            margin-bottom: 20px;
+        .panel-details > .panel-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
         }
-        .source-section h4 {
-            font-size: 13px;
-            color: #1a365d;
-            margin-bottom: 8px;
+        .panel-details > .panel-header::-webkit-details-marker {
+            display: none;
+        }
+        .panel-details > .panel-header::after {
+            content: "+";
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .panel-details[open] > .panel-header::after {
+            content: "-";
+        }
+        .panel-content {
+            padding: 15px 20px;
         }
         .source-item {
-            padding: 8px 10px;
-            background: #f9fafb;
-            border-radius: 4px;
-            margin-bottom: 6px;
-            font-size: 13px;
+            padding: 12px 15px;
+            background: white;
+            margin-bottom: 8px;
             cursor: pointer;
+            border: 1px solid #e0e0e0;
+            transition: border-color 0.2s;
         }
         .source-item:hover {
-            background: #e5e7eb;
+            border-color: #1a1a1a;
         }
         .source-item .file-name {
             font-weight: 600;
-            color: #1a365d;
+            color: #1a1a1a;
+            font-size: 0.9rem;
         }
         .source-item .page-num {
             color: #666;
-            font-size: 12px;
+            font-size: 0.8rem;
+            margin-top: 2px;
         }
         .source-item .excerpt {
             color: #666;
-            font-size: 12px;
-            margin-top: 4px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            line-height: 1.5;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
         .source-item a {
-            color: #2563eb;
+            color: #1a1a1a;
             text-decoration: none;
+            font-weight: 500;
         }
         .source-item a:hover {
             text-decoration: underline;
         }
+        .empty-state {
+            color: #999;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
 
         /* Upload Section */
-        .upload-section {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
+        .upload-area {
+            padding: 15px 20px;
         }
-        .upload-section input[type="file"] {
-            font-size: 12px;
+        .upload-area input[type="file"] {
+            font-size: 0.8rem;
+            margin-bottom: 10px;
         }
-        .upload-section button {
-            margin-top: 8px;
-            padding: 6px 12px;
-            background: #6366f1;
-            color: white;
-            border: none;
-            border-radius: 4px;
+        .doc-list {
+            margin-top: 12px;
+        }
+        .doc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+        }
+        .doc-item .name {
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+        .doc-item .delete-btn {
+            color: #999;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 1.1rem;
+            padding: 0 5px;
+        }
+        .doc-item .delete-btn:hover {
+            color: #c00;
         }
 
-        /* Loading indicator */
+        /* Loading */
         .loading {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #059669;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ddd;
+            border-top: 2px solid #1a1a1a;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
             margin-right: 10px;
+            vertical-align: middle;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* Documents list */
-        .doc-list {
-            margin-top: 10px;
-        }
-        .doc-item {
-            display: flex;
-            justify-content: space-between;
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
             align-items: center;
-            padding: 6px 8px;
-            background: #f0f9ff;
-            border-radius: 4px;
-            margin-bottom: 4px;
-            font-size: 12px;
+            justify-content: center;
         }
-        .doc-item .name {
-            color: #1e40af;
+        .modal-overlay.active {
+            display: flex;
         }
-        .doc-item .delete-btn {
-            color: #dc2626;
-            cursor: pointer;
+        .modal {
+            background: white;
+            padding: 30px;
+            min-width: 400px;
+            max-width: 500px;
+        }
+        .modal h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-weight: 400;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+        }
+        .modal label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+            color: #666;
+        }
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            font-family: inherit;
             font-size: 14px;
+        }
+        .modal input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Levitech Legal Assistant</h1>
+        <div class="logo">Levitech</div>
     </header>
 
-    <div class="container">
-        <!-- Case Selector -->
-        <div class="case-selector">
-            <label for="case-select">Case:</label>
-            <select id="case-select">
-                <option value="">-- Select a case --</option>
-            </select>
-            <button onclick="createCase()">+ New Case</button>
-        </div>
+    <!-- Case Selector -->
+    <div class="case-selector">
+        <label for="case-select">Case</label>
+        <select id="case-select">
+            <option value="">Select a case</option>
+        </select>
+        <button class="btn" onclick="showNewCaseModal()">New Case</button>
+    </div>
 
-        <div class="main-layout">
-            <!-- Chat Area -->
-            <div class="chat-area">
-                <div class="chat-messages" id="chat-messages">
-                    <div class="message assistant">
-                        <div class="message-label">Assistant</div>
-                        Select a case to begin asking questions about your documents.
-                    </div>
-                </div>
-                <div class="chat-input">
-                    <form onsubmit="sendMessage(event)">
-                        <input type="text" id="question-input" placeholder="Ask a question about the case..." disabled>
-                        <button type="submit" id="send-btn" disabled>Ask</button>
-                    </form>
+    <div class="main-layout">
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="chat-header-title">Conversation</div>
+                <div class="thread-pills" id="thread-pills">
+                    <div class="empty-state">No previous threads</div>
                 </div>
             </div>
-
-            <!-- Sources Panel -->
-            <div class="sources-panel">
-                <h3>Sources</h3>
-
-                <div class="source-section">
-                    <h4>Client Documents</h4>
-                    <div id="client-sources">
-                        <div class="source-item" style="color: #999;">No documents loaded</div>
-                    </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message assistant">
+                    <div class="message-label">Assistant</div>
+                    <div class="message-content">Select a case to begin asking questions about your documents.</div>
                 </div>
+            </div>
+            <div class="chat-input">
+                <form onsubmit="sendMessage(event)">
+                    <input type="text" id="question-input" placeholder="Ask a question about the case..." disabled>
+                    <button type="submit" class="btn" id="send-btn" disabled>Send</button>
+                </form>
+            </div>
+        </div>
 
-                <div class="source-section">
-                    <h4>Legal Sources</h4>
-                    <div id="legal-sources">
-                        <div class="source-item" style="color: #999;">No legal sources cited yet</div>
+        <!-- Sources Panel -->
+        <div class="sources-panel">
+            <div class="panel-section">
+                <details class="panel-details">
+                    <summary class="panel-header">Legal Sources</summary>
+                    <div class="panel-content" id="legal-sources">
+                        <div class="empty-state">No legal sources cited yet</div>
                     </div>
-                </div>
+                </details>
+            </div>
 
-                <!-- Upload Section -->
-                <div class="upload-section">
-                    <h4>Upload Document</h4>
+            <div class="panel-section">
+                <details class="panel-details">
+                    <summary class="panel-header">Document Evidences</summary>
+                    <div class="panel-content" id="client-sources">
+                        <div class="empty-state">No documents loaded</div>
+                    </div>
+                </details>
+            </div>
+
+            <div class="panel-section">
+                <div class="panel-header">Upload Document</div>
+                <div class="upload-area">
                     <input type="file" id="file-input" accept=".pdf,.docx" disabled>
-                    <button onclick="uploadDocument()" id="upload-btn" disabled>Upload</button>
+                    <button class="btn" onclick="uploadDocument()" id="upload-btn" disabled>Upload</button>
                     <div class="doc-list" id="doc-list"></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- New Case Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <h2>New Case</h2>
+            <label for="new-case-id">Case ID</label>
+            <input type="text" id="new-case-id" placeholder="e.g., smith_immigration_2024">
+            <label for="new-client-name">Client Name</label>
+            <input type="text" id="new-client-name" placeholder="Optional">
+            <div class="modal-actions">
+                <button class="btn" onclick="createCase()">Create</button>
+                <button class="btn btn-outline" onclick="hideNewCaseModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentCaseId = null;
+        let currentThreadId = null;
+        let isNewThreadMode = false;
 
-        // Load cases on page load
         document.addEventListener('DOMContentLoaded', loadCases);
 
         async function loadCases() {
@@ -336,7 +553,7 @@
                 const cases = await response.json();
 
                 const select = document.getElementById('case-select');
-                select.innerHTML = '<option value="">-- Select a case --</option>';
+                select.innerHTML = '<option value="">Select a case</option>';
 
                 cases.forEach(c => {
                     const option = document.createElement('option');
@@ -357,28 +574,170 @@
 
         async function selectCase(caseId) {
             currentCaseId = caseId;
+            currentThreadId = null;
+            isNewThreadMode = false;
 
-            // Enable inputs
             document.getElementById('question-input').disabled = false;
             document.getElementById('send-btn').disabled = false;
             document.getElementById('file-input').disabled = false;
             document.getElementById('upload-btn').disabled = false;
 
-            // Load documents
             await loadDocuments();
+            renderEmptyThreadMessage();
+            await loadThreads();
 
-            // Clear chat
+            document.getElementById('client-sources').innerHTML = '<div class="empty-state">Ask a question to see relevant sources</div>';
+            document.getElementById('legal-sources').innerHTML = '<div class="empty-state">No legal sources cited yet</div>';
+        }
+
+        async function createThreadOnDemand() {
+            if (!currentCaseId) return;
+            try {
+                const response = await fetch(`/cases/${currentCaseId}/threads`, {
+                    method: 'POST'
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to start a new thread');
+                }
+                const thread = await response.json();
+                currentThreadId = thread.id;
+                await loadThreads(thread.id);
+                return thread;
+            } catch (err) {
+                console.error('Failed to start new thread:', err);
+                return null;
+            }
+        }
+
+        async function loadThreads(activeThreadId = null) {
+            if (!currentCaseId) return;
+            try {
+                const response = await fetch(`/cases/${currentCaseId}/threads`);
+                const threads = await response.json();
+                renderThreadPills(threads, activeThreadId);
+            } catch (err) {
+                console.error('Failed to load threads:', err);
+            }
+        }
+
+        function renderThreadPills(threads, activeThreadId = null) {
+            const pillContainer = document.getElementById('thread-pills');
+            if (!threads || threads.length === 0) {
+                pillContainer.innerHTML = `
+                    <button class="thread-pill add${activeThreadId === 'new' ? ' active' : ''}" id="thread-pill-new" type="button" title="New thread">+</button>
+                `;
+            } else {
+                const activeId = activeThreadId || currentThreadId;
+                pillContainer.innerHTML = threads.map(t => `
+                    <button class="thread-pill${t.id === activeId ? ' active' : ''}" id="thread-pill-${t.id}" type="button" data-thread-id="${t.id}">
+                        <span class="thread-pill-label">${escapeHtml(t.title || 'New thread')}</span>
+                        <span class="thread-pill-delete" data-thread-id="${t.id}" title="Delete thread">&times;</span>
+                    </button>
+                `).join('') + `
+                    <button class="thread-pill add${activeThreadId === 'new' ? ' active' : ''}" id="thread-pill-new" type="button" title="New thread">+</button>
+                `;
+            }
+
+            if (threads && threads.length > 0) {
+                threads.forEach(t => {
+                    const pill = document.getElementById(`thread-pill-${t.id}`);
+                    if (pill) {
+                        pill.addEventListener('click', (event) => {
+                            if (event.target && event.target.classList.contains('thread-pill-delete')) {
+                                return;
+                            }
+                            isNewThreadMode = false;
+                            loadThread(t.id);
+                        });
+                        const deleteBtn = pill.querySelector('.thread-pill-delete');
+                        if (deleteBtn) {
+                            deleteBtn.addEventListener('click', (event) => {
+                                event.stopPropagation();
+                                deleteThread(t.id);
+                            });
+                        }
+                    }
+                });
+            }
+
+            const newBtn = document.getElementById('thread-pill-new');
+            if (newBtn) {
+                newBtn.addEventListener('click', () => {
+                    currentThreadId = null;
+                    isNewThreadMode = true;
+                    renderEmptyThreadMessage();
+                    renderThreadPills(threads, 'new');
+                });
+            }
+        }
+
+        async function deleteThread(threadId) {
+            if (!currentCaseId) return;
+            if (!confirm('Delete this thread?')) return;
+            try {
+                const response = await fetch(`/cases/${currentCaseId}/threads/${threadId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    const err = await response.json();
+                    alert('Delete failed: ' + (err.detail || 'Unknown error'));
+                    return;
+                }
+                if (currentThreadId === threadId) {
+                    currentThreadId = null;
+                    renderEmptyThreadMessage();
+                }
+                await loadThreads();
+            } catch (err) {
+                alert('Error deleting thread: ' + err.message);
+            }
+        }
+
+        async function loadThread(threadId) {
+            if (!currentCaseId) return;
+            try {
+                const response = await fetch(`/cases/${currentCaseId}/threads/${threadId}`);
+                if (!response.ok) {
+                    throw new Error('Thread not found');
+                }
+                const thread = await response.json();
+                currentThreadId = thread.id;
+                isNewThreadMode = false;
+                renderThreadMessages(thread);
+                await loadThreads(thread.id);
+                updateSources(thread.last_evidence || [], thread.last_legal_sources || []);
+            } catch (err) {
+                console.error('Failed to load thread:', err);
+            }
+        }
+
+        function renderEmptyThreadMessage() {
             const chatMessages = document.getElementById('chat-messages');
             chatMessages.innerHTML = `
                 <div class="message assistant">
                     <div class="message-label">Assistant</div>
-                    Case "${caseId}" selected. You can now ask questions about the uploaded documents.
+                    <div class="message-content">Case "${escapeHtml(currentCaseId || '')}" selected. You can now ask questions about the uploaded documents.</div>
                 </div>
             `;
+        }
 
-            // Clear sources
-            document.getElementById('client-sources').innerHTML = '<div class="source-item" style="color: #999;">Ask a question to see relevant sources</div>';
-            document.getElementById('legal-sources').innerHTML = '<div class="source-item" style="color: #999;">No legal sources cited yet</div>';
+        function renderThreadMessages(thread) {
+            const chatMessages = document.getElementById('chat-messages');
+            if (!thread || !thread.turns || thread.turns.length === 0) {
+                renderEmptyThreadMessage();
+                return;
+            }
+            chatMessages.innerHTML = thread.turns.map(turn => `
+                <div class="message user">
+                    <div class="message-label">You</div>
+                    <div class="message-content">${escapeHtml(turn.question)}</div>
+                </div>
+                <div class="message assistant">
+                    <div class="message-label">Assistant</div>
+                    <div class="message-content">${formatAnswer(turn.answer)}</div>
+                </div>
+            `).join('');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         async function loadDocuments() {
@@ -390,7 +749,7 @@
 
                 const docList = document.getElementById('doc-list');
                 if (docs.length === 0) {
-                    docList.innerHTML = '<div style="color: #999; font-size: 12px;">No documents uploaded</div>';
+                    docList.innerHTML = '<div class="empty-state">No documents uploaded</div>';
                 } else {
                     docList.innerHTML = docs.map(d => `
                         <div class="doc-item">
@@ -404,11 +763,25 @@
             }
         }
 
-        async function createCase() {
-            const caseId = prompt('Enter case ID (folder name):');
-            if (!caseId) return;
+        function showNewCaseModal() {
+            document.getElementById('modal-overlay').classList.add('active');
+            document.getElementById('new-case-id').focus();
+        }
 
-            const clientName = prompt('Enter client name (optional):') || '';
+        function hideNewCaseModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+            document.getElementById('new-case-id').value = '';
+            document.getElementById('new-client-name').value = '';
+        }
+
+        async function createCase() {
+            const caseId = document.getElementById('new-case-id').value.trim();
+            const clientName = document.getElementById('new-client-name').value.trim();
+
+            if (!caseId) {
+                alert('Please enter a Case ID');
+                return;
+            }
 
             try {
                 const response = await fetch('/cases', {
@@ -427,6 +800,7 @@
                     return;
                 }
 
+                hideNewCaseModal();
                 await loadCases();
                 document.getElementById('case-select').value = caseId;
                 selectCase(caseId);
@@ -448,10 +822,11 @@
             const formData = new FormData();
             formData.append('file', file);
 
-            try {
-                document.getElementById('upload-btn').textContent = 'Uploading...';
-                document.getElementById('upload-btn').disabled = true;
+            const btn = document.getElementById('upload-btn');
+            btn.textContent = 'Uploading...';
+            btn.disabled = true;
 
+            try {
                 const response = await fetch(`/cases/${currentCaseId}/upload`, {
                     method: 'POST',
                     body: formData
@@ -465,12 +840,11 @@
 
                 fileInput.value = '';
                 await loadDocuments();
-                alert('Document uploaded and indexed successfully!');
             } catch (err) {
                 alert('Error uploading: ' + err.message);
             } finally {
-                document.getElementById('upload-btn').textContent = 'Upload';
-                document.getElementById('upload-btn').disabled = false;
+                btn.textContent = 'Upload';
+                btn.disabled = false;
             }
         }
 
@@ -504,19 +878,26 @@
 
             const chatMessages = document.getElementById('chat-messages');
 
-            // Add user message
+            if (!currentThreadId) {
+                await createThreadOnDemand();
+                if (!currentThreadId) {
+                    return;
+                }
+                isNewThreadMode = false;
+            }
+
             chatMessages.innerHTML += `
                 <div class="message user">
                     <div class="message-label">You</div>
-                    ${escapeHtml(question)}
+                    <div class="message-content">${escapeHtml(question)}</div>
                 </div>
             `;
 
-            // Add loading indicator
             const loadingId = 'loading-' + Date.now();
             chatMessages.innerHTML += `
                 <div class="message assistant" id="${loadingId}">
-                    <div class="loading"></div> Thinking...
+                    <div class="message-label">Assistant</div>
+                    <div class="message-content"><span class="loading"></span> Thinking...</div>
                 </div>
             `;
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -529,39 +910,39 @@
                 const response = await fetch(`/cases/${currentCaseId}/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question })
+                    body: JSON.stringify({ question, thread_id: currentThreadId })
                 });
 
                 const data = await response.json();
-
-                // Remove loading
                 document.getElementById(loadingId).remove();
 
                 if (!response.ok) {
                     chatMessages.innerHTML += `
                         <div class="message error">
                             <div class="message-label">Error</div>
-                            ${escapeHtml(data.detail || 'An error occurred')}
+                            <div class="message-content">${escapeHtml(data.detail || 'An error occurred')}</div>
                         </div>
                     `;
                 } else {
-                    // Add assistant response
+                    if (data.thread_id) {
+                        currentThreadId = data.thread_id;
+                        isNewThreadMode = false;
+                    }
                     chatMessages.innerHTML += `
                         <div class="message assistant">
                             <div class="message-label">Assistant</div>
-                            ${formatAnswer(data.answer)}
+                            <div class="message-content">${formatAnswer(data.answer)}</div>
                         </div>
                     `;
-
-                    // Update sources panel
                     updateSources(data.evidence, data.legal_sources);
+                    await loadThreads(currentThreadId);
                 }
             } catch (err) {
                 document.getElementById(loadingId).remove();
                 chatMessages.innerHTML += `
                     <div class="message error">
                         <div class="message-label">Error</div>
-                        Failed to get response: ${escapeHtml(err.message)}
+                        <div class="message-content">Failed to get response: ${escapeHtml(err.message)}</div>
                     </div>
                 `;
             } finally {
@@ -572,12 +953,11 @@
         }
 
         function updateSources(evidence, legalSources) {
-            // Client sources
             const clientDiv = document.getElementById('client-sources');
             const clientEvidence = evidence.filter(e => e.source_type === 'client');
 
             if (clientEvidence.length === 0) {
-                clientDiv.innerHTML = '<div class="source-item" style="color: #999;">No client documents cited</div>';
+                clientDiv.innerHTML = '<div class="empty-state">No client documents cited</div>';
             } else {
                 clientDiv.innerHTML = clientEvidence.map(e => `
                     <div class="source-item">
@@ -588,10 +968,9 @@
                 `).join('');
             }
 
-            // Legal sources
             const legalDiv = document.getElementById('legal-sources');
             if (!legalSources || legalSources.length === 0) {
-                legalDiv.innerHTML = '<div class="source-item" style="color: #999;">No legal sources cited</div>';
+                legalDiv.innerHTML = '<div class="empty-state">No legal sources cited</div>';
             } else {
                 legalDiv.innerHTML = legalSources.map(s => `
                     <div class="source-item">
@@ -603,11 +982,10 @@
         }
 
         function formatAnswer(text) {
-            // Convert markdown-style formatting
             return escapeHtml(text)
                 .replace(/\n/g, '<br>')
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\[Source: (.*?)\]/g, '<em style="color: #2563eb;">[Source: $1]</em>');
+                .replace(/\[Source: (.*?)\]/g, '<em style="color: #666;">[Source: $1]</em>');
         }
 
         function escapeHtml(text) {
@@ -615,6 +993,20 @@
             div.textContent = text;
             return div.innerHTML;
         }
+
+        // Close modal on overlay click
+        document.getElementById('modal-overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                hideNewCaseModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideNewCaseModal();
+            }
+        });
     </script>
 </body>
 </html>

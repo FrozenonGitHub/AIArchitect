@@ -455,17 +455,23 @@
             showThinking();
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/chat', {
+                const response = await fetch('/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        user_message: message
+                        message: message
                     })
                 });
 
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || `HTTP ${response.status}`);
+                }
+
                 const data = await response.json();
+                const reply = data.response ?? 'No response returned.';
 
                 // Hide thinking animation
                 hideThinking();
@@ -473,11 +479,11 @@
                 // Add assistant response to current chat
                 currentChat.messages.push({
                     role: 'assistant',
-                    content: data.response
+                    content: reply
                 });
 
                 // Display assistant message
-                addMessageToDOM('assistant', data.response);
+                addMessageToDOM('assistant', reply);
 
                 // Update history
                 renderHistory();

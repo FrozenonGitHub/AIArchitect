@@ -177,12 +177,16 @@ def generate_answer(
         AnswerResponse with validated citations
     """
     # Phase A: Retrieval
+    print(f"[answer_engine] Starting retrieval for: {question[:50]}...")
 
     # Get session context
     session_context = session_manager.get_context_for_prompt(case_id)
+    print(f"[answer_engine] Got session context")
 
     # Search client documents (hybrid search)
+    print(f"[answer_engine] Searching client documents...")
     client_evidence = hybrid_search.search(case_id, question, top_k=8)
+    print(f"[answer_engine] Found {len(client_evidence)} client evidence chunks")
 
     # Search legal sources if requested
     legal_sources: list[LegalSource] = []
@@ -191,7 +195,13 @@ def generate_answer(
         legal_keywords = ["law", "legal", "regulation", "rule", "act", "statute",
                          "immigration", "visa", "tribunal", "court", "judgment"]
         if any(kw in question.lower() for kw in legal_keywords):
-            legal_sources = legal_retriever.get_legal_sources_for_query(question)
+            print(f"[answer_engine] Searching legal sources (this may take a while)...")
+            try:
+                legal_sources = legal_retriever.get_legal_sources_for_query(question)
+                print(f"[answer_engine] Found {len(legal_sources)} legal sources")
+            except Exception as e:
+                print(f"[answer_engine] Legal source search failed: {e}")
+                legal_sources = []
 
     # Phase B: Answer Generation with validation loop
 
@@ -207,6 +217,7 @@ def generate_answer(
             current_prompt = system_prompt
 
         # Call LLM
+        print(f"[answer_engine] Calling LLM (attempt {attempt + 1})...")
         client = _get_llm_client()
         response = client.chat.completions.create(
             model=config.LLM_MODEL,
@@ -216,6 +227,7 @@ def generate_answer(
             ],
             temperature=0.3,  # Lower temperature for more factual responses
         )
+        print(f"[answer_engine] LLM response received")
 
         answer_text = response.choices[0].message.content
 

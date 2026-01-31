@@ -66,10 +66,9 @@ LevitechDemo/
 
 ### Citation Whitelist (Enforced)
 Only these domains can be cited:
+- `acas.org.uk`
 - `gov.uk`
-- `legislation.gov.uk`
-- `caselaw.nationalarchives.gov.uk`
-- `commonslibrary.parliament.uk`
+- `citizensadvice.org.uk`
 
 ### 4-Check Citation Validation
 Every citation must pass:

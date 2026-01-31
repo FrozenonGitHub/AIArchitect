@@ -19,10 +19,13 @@ from models.schemas import (
     DocumentInfo,
     SessionState,
     EvidenceItem,
+    ConversationThread,
+    ThreadSummary,
 )
 from services import (
     path_validator,
     session_manager,
+    thread_manager,
     document_processor,
     document_index_service,
     chroma_service,
@@ -277,11 +280,46 @@ async def chat(case_id: str, request: ChatRequest):
     # Format evidence for display
     evidence = answer_engine.format_evidence_for_display(response)
 
+    thread_id = request.thread_id
+    if thread_id:
+        try:
+            thread = thread_manager.append_turn(
+                case_id,
+                thread_id,
+                request.question,
+                response.answer,
+                evidence,
+                response.legal_sources,
+            )
+        except ValueError:
+            thread = thread_manager.create_thread(case_id)
+            thread = thread_manager.append_turn(
+                case_id,
+                thread.id,
+                request.question,
+                response.answer,
+                evidence,
+                response.legal_sources,
+            )
+    else:
+        thread = thread_manager.create_thread(case_id)
+        thread = thread_manager.append_turn(
+            case_id,
+            thread.id,
+            request.question,
+            response.answer,
+            evidence,
+            response.legal_sources,
+        )
+
     return ChatResponse(
         answer=response.answer,
         evidence=evidence,
         legal_sources=response.legal_sources,
         session_updated=True,
+        thread_id=thread.id,
+        thread_title=thread.title,
+        thread_turn_count=len(thread.turns),
     )
 
 
@@ -313,6 +351,62 @@ async def reset_session(case_id: str):
         session_path.unlink()
 
     return {"status": "session reset"}
+
+
+# ============================================================================
+# Threads
+# ============================================================================
+
+@app.get("/cases/{case_id}/threads", response_model=list[ThreadSummary])
+async def list_threads(case_id: str):
+    """List conversation threads for a case."""
+    try:
+        path_validator.ensure_case_exists(case_id)
+    except path_validator.PathValidationError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    return thread_manager.list_thread_summaries(case_id)
+
+
+@app.post("/cases/{case_id}/threads", response_model=ConversationThread)
+async def create_thread(case_id: str):
+    """Create a new conversation thread for a case."""
+    try:
+        path_validator.ensure_case_exists(case_id)
+    except path_validator.PathValidationError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    return thread_manager.create_thread(case_id)
+
+
+@app.get("/cases/{case_id}/threads/{thread_id}", response_model=ConversationThread)
+async def get_thread(case_id: str, thread_id: str):
+    """Get a single conversation thread."""
+    try:
+        path_validator.ensure_case_exists(case_id)
+    except path_validator.PathValidationError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    thread = thread_manager.get_thread(case_id, thread_id)
+    if not thread:
+        raise HTTPException(status_code=404, detail=f"Thread not found: {thread_id}")
+    return thread
+
+
+@app.delete("/cases/{case_id}/threads/{thread_id}")
+async def delete_thread(case_id: str, thread_id: str):
+    """Delete a conversation thread."""
+    try:
+        path_validator.ensure_case_exists(case_id)
+    except path_validator.PathValidationError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    try:
+        thread_manager.delete_thread(case_id, thread_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    return {"deleted": thread_id}
 
 
 # ============================================================================

@@ -49,6 +49,15 @@ class LegalSource(BaseModel):
     fetched_at: datetime = Field(default_factory=datetime.utcnow)
 
 
+class LegalSourceSummary(BaseModel):
+    """Lightweight legal source for UI display/storage."""
+    id: Optional[str] = None
+    url: str = ""
+    domain: str = ""
+    title: str = ""
+    excerpt: str = ""
+
+
 class Citation(BaseModel):
     """A citation extracted from LLM response."""
     id: str  # Reference to LegalSource.id or chunk_id
@@ -81,15 +90,6 @@ class SessionState(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 
-class SearchResult(BaseModel):
-    """A search result from hybrid search."""
-    chunk_id: str
-    text: str
-    score: float
-    provenance: ChunkProvenance
-    source_type: str = "client"  # "client" or "legal"
-
-
 class EvidenceItem(BaseModel):
     """Evidence item in answer response."""
     source_type: str  # "client" or "legal"
@@ -100,9 +100,45 @@ class EvidenceItem(BaseModel):
     excerpt: str
 
 
+class ThreadTurn(BaseModel):
+    """A single user/assistant turn in a conversation thread."""
+    question: str
+    answer: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class ConversationThread(BaseModel):
+    """Conversation thread stored per case."""
+    id: str
+    title: str = "New thread"
+    turns: list[ThreadTurn] = Field(default_factory=list)
+    last_evidence: list[EvidenceItem] = Field(default_factory=list)
+    last_legal_sources: list[LegalSourceSummary] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class ThreadSummary(BaseModel):
+    """Summary info for listing conversation threads."""
+    id: str
+    title: str
+    turn_count: int
+    updated_at: datetime
+
+
+class SearchResult(BaseModel):
+    """A search result from hybrid search."""
+    chunk_id: str
+    text: str
+    score: float
+    provenance: ChunkProvenance
+    source_type: str = "client"  # "client" or "legal"
+
+
 class ChatRequest(BaseModel):
     """Request body for chat endpoint."""
     question: str
+    thread_id: Optional[str] = None
 
 
 class ChatResponse(BaseModel):
@@ -111,6 +147,9 @@ class ChatResponse(BaseModel):
     evidence: list[EvidenceItem] = Field(default_factory=list)
     legal_sources: list[LegalSource] = Field(default_factory=list)
     session_updated: bool = False
+    thread_id: Optional[str] = None
+    thread_title: Optional[str] = None
+    thread_turn_count: int = 0
 
 
 class AnswerResponse(BaseModel):

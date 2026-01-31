@@ -23,3 +23,4 @@ __pycache__/
 # Case Files and Recordings
 LevitechDemo/storage
 Recordings/
+chroma_db/

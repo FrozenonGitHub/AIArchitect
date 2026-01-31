@@ -168,10 +168,9 @@ uv pip install rank-bm25
 
 **MVP Choice:** Direct HTTP fetch with BeautifulSoup (already in your code)
 - Whitelist domains:
+  - acas.org.uk
   - gov.uk
-  - legislation.gov.uk
-  - caselaw.nationalarchives.gov.uk
-  - commonslibrary.parliament.uk
+  - citizensadvice.org.uk
 
 **Source Snapshot Storage (Critical for P0):**
 - Store raw HTML/text of every fetched legal source

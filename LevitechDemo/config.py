@@ -33,10 +33,9 @@ LLM_MODEL = "gpt-5"  # or available model on AI-Builders
 
 # Citation whitelist - ONLY these domains can be cited
 WHITELIST_DOMAINS = [
+    "acas.org.uk",
     "gov.uk",
-    "legislation.gov.uk",
-    "caselaw.nationalarchives.gov.uk",
-    "commonslibrary.parliament.uk",
+    "citizensadvice.org.uk",
 ]
 
 # Document processing
