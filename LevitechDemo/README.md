@@ -22,6 +22,20 @@ Open http://127.0.0.1:8000 in your browser.
 
 ---
 
+## Deployment
+
+This repo includes:
+- `Procfile` for platforms that use a process declaration.
+- `Dockerfile` for container-based deployment (installs OCR system deps).
+- Root `requirements.txt` that points to `LevitechDemo/requirements.txt`.
+
+Environment variables to set:
+- `COURSE_API_KEY` (AI-Builders API key used for embeddings + LLM). If not set, the app will use `AI_BUILDER_TOKEN` injected at deploy time.
+
+An example file is provided at `../.env.example` (do not commit real secrets).
+
+---
+
 ## Project Structure
 
 ```

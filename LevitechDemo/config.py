@@ -21,7 +21,8 @@ LEGAL_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 CHROMA_DB_PATH.mkdir(parents=True, exist_ok=True)
 
 # AI-Builders API configuration
-AI_BUILDERS_API_KEY = os.getenv("COURSE_API_KEY")
+# Prefer explicit COURSE_API_KEY, fallback to AI_BUILDER_TOKEN injected at deploy time.
+AI_BUILDERS_API_KEY = os.getenv("COURSE_API_KEY") or os.getenv("AI_BUILDER_TOKEN")
 AI_BUILDERS_BASE_URL = "https://space.ai-builders.com/backend/v1"
 
 # Embedding model
